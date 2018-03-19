@@ -72,5 +72,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="scala-sdk-2.12.4" level="project" />
+    <orderEntry type="library" name="bwmirror_v2_6" level="project" />
   </component>
 </module>

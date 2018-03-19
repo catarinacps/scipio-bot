@@ -1,5 +1,14 @@
-# scipio-bot
-A BWAPI (BWMirror) Scala based bot made for MLP.
+<img src="report/images/scipius.png" alt="Scipius Africanus" style="width: 200px;"/>
+
+# **scipio-bot**
+A BWAPI (BWMirror) Scala based Starcraft Broodwar bot made for MLP.\
+
+**Collaborators**:
+- Henrique Silva
+- Maria Clara Jacintho
+- Gabriel Niemiec
+
+---
 
 ## *How to run it?*
 1. Install the latest 32bit JDK (version 8)

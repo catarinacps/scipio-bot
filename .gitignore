@@ -34,3 +34,7 @@ src_managed/
 project/boot/
 .history
 .cache
+
+bwapi_bridge2_6.dll
+libgmp-10.dll
+libmpfr-4.dll

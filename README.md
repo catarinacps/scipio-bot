@@ -28,14 +28,17 @@ I installed mine from pacman using
 
         sudo pacman -S wine
 2. Install `winetricks` also from your favorite package manager
-3. Run the BWAPI installer using `wine BWAPI_412_Setup.exe`
-4. Install all the packages wine will ask as the installation starts\
+3. Paste the extracted StarCraft folder in `~/.wine/drive_c/starcraft`
+4. Run the BWAPI installer using `wine BWAPI_412_Setup.exe`
+5. Install all the packages wine will ask as the installation starts\
 There's a chance you'll need to run the .exe again after installing said wine packages
-5. Export your Starcraft folder using `export STARCRAFT=~/.wine/drive_c/starcraft` for ease of use 
-6. Run Starcraft using
+6. Select the installation folder as your StarCraft folder inside the wine folder (the installer should create a BWAPI folder inside `~/.wine/drive_c/starcraft`)
+7. Point to the StarCraft folder inside `.wine/drive_c` several times when it asks for your Starcraft location
+8. Export your StarCraft folder path using `export STARCRAFT=~/.wine/drive_c/starcraft` for ease of use 
+9. Run Starcraft using
 
         wine /desktop=Starcraft,800x600 '$STARCRAFT/StarCraft.exe'
-7. Ok, so, theoretically, you now should install a `.dll` injector (as ChaosLauncher isn't fond of Linux), but,\
+10. Ok, so, theoretically, you now should install a `.dll` injector (as ChaosLauncher isn't fond of Linux), but,\
 unfortunately, it turns out BWAPI as a whole isn't fond of Linux.\
 I tried my best to get it running, but I failed. BUT! a guy at [starcraftai's forum][linux] got it working! You should definitely\
 check it out, as I gave up halfway through. I may later try again though.

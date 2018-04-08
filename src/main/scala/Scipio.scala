@@ -1,7 +1,9 @@
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
 
-class TestBot extends DefaultBWListener {
+import scala.collection.JavaConverters._
+
+class Scipio extends DefaultBWListener {
     val mirror = new Mirror()
     var game: Game = _
     var self: Player = _
@@ -31,7 +33,6 @@ class TestBot extends DefaultBWListener {
         //game.setTextSize(10);
         game.drawTextScreen(10, 10, "Playing as " + self.getName + " - " + self.getRace)
 
-        import scala.collection.JavaConverters._
 
         self.getUnits.asScala
             .filter(_.getType == UnitType.Terran_Command_Center && self.minerals >= 50)
@@ -53,7 +54,7 @@ class TestBot extends DefaultBWListener {
     }
 }
 
-object TestBot {
+object Scipio {
     def main(args: Array[String]): Unit =
-        new TestBot().run()
+        new Scipio().run()
 }

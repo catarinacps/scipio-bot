@@ -1,6 +1,8 @@
 # Created by https://www.gitignore.io/api/scala,sbt
 #DO NOT IGNORE INTELLIJ FILES
 
+.directory
+
 # Starcraft specific
 bwapi-data/
 

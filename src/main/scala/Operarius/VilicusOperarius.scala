@@ -5,6 +5,6 @@ package Operarius
   * It manages how many workers are active, how many minerals
   * are being gathered and any new request for new workers.
   */
-class VilicusOperarius {
+// class VilicusOperarius {
 
-}
+// }

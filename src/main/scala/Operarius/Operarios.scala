@@ -4,6 +4,6 @@ package Operarius
   *
   * It keeps track of each worker and its current job
   */
-class Operarios {
+// class Operarios {
 
-}
+// }

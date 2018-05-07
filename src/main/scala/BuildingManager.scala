@@ -47,10 +47,14 @@ class BuildingManager (game: Game, player: Player){
     building match{
       case bwapi.UnitType.Terran_Refinery  =>
         println("Tryin to build a refinary")
-
         val closestGeyser : Unit = findClosestGeyser()
         println("nice")
-        work.build(bwapi.UnitType.Terran_Refinery , closestGeyser.getTilePosition)
+        work.build(building , closestGeyser.getTilePosition)
+      case bwapi.UnitType.Terran_Supply_Depot =>
+        println("Tryin to build a supply depot")
+        work.build(building,game.getBuildLocation(building,player.getStartLocation,100000000))
+        println("nice")
+        //someone rewrite this please
       case _ => println ("oops")
     }
   }

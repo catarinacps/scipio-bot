@@ -1,6 +1,7 @@
 import bwapi._
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
 
 
 /** The worker controller class.
@@ -9,7 +10,6 @@ import scala.collection.JavaConverters._
   * are being gathered and any new request for new workers.
   */
 class WorkerController(game: Game, player: Player) {
-
   var miningWorkers: Int = 0
   var gasWorkers: Int = 0
 

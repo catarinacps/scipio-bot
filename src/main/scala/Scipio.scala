@@ -37,7 +37,7 @@ class Scipio extends DefaultBWListener {
 
     override def onFrame(): Unit = {
         Scipio.idleWorkers = self.getUnits.asScala
-            .filter((unit: ScUnit) => unit.getType.isWorker && unit.isIdle)
+            .filter(u => u.getType.isWorker && u.isIdle)
             .toList
         Scipio.mineralList = game.neutral.getUnits.asScala
             .filter(_.getType.isMineralField)
@@ -57,8 +57,13 @@ class Scipio extends DefaultBWListener {
             val newMineralWorkers: List[ScUnit] = separatedIdle.filter(_._2 == mineral).map(_._1)
             val newGasWorkers: List[ScUnit] = separatedIdle.filter(_._2 == gas).map(_._1)
 
-            WorkerController.applyJob(newMineralWorkers, Scipio.mineralList)
-            WorkerController.applyJob(newGasWorkers, Scipio.vespeneList)
+            val workerController = Workers.controller(Scipio.mineralList, Scipio.vespeneList)
+            val gatherMinerals = workerController(Jobs.mineral)
+            val gatherGas = workerController(Jobs.gas)
+
+            gatherMinerals(newMineralWorkers)
+            gatherGas(newGasWorkers)
+
             Scipio.miningWorkers = Scipio.miningWorkers:::newMineralWorkers
             Scipio.gasWorkers = Scipio.gasWorkers:::newGasWorkers
         }

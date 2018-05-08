@@ -1,6 +1,6 @@
 
 
-class BuildOrder{
+object BuildOrder{
 
 
 }

@@ -1,5 +1,10 @@
+import Jobs._
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
+
+import scala.annotation.tailrec
+import scala.collection.JavaConverters._
+import scala.collection.mutable._
 
 class Scipio extends DefaultBWListener {
     val mirror = new Mirror()
@@ -31,14 +36,57 @@ class Scipio extends DefaultBWListener {
     }
 
     override def onFrame(): Unit = {
-      val workers = new WorkerController(game,self)
+        Scipio.idleWorkers = self.getUnits.asScala
+            .filter((unit: ScUnit) => unit.getType.isWorker && unit.isIdle)
+            .toList
+        Scipio.mineralList = game.neutral.getUnits.asScala
+            .filter(_.getType.isMineralField)
+        Scipio.vespeneList = game.neutral.getUnits.asScala
+            .filter(_.getType.isRefinery)
 
-      production.update(game,self)
-      workers.update()
+        Scipio.commandCenterList = self.getUnits.asScala
+            .filter(u => u.getType == UnitType.Terran_Command_Center && !u.isTraining)
+
+        if (!Scipio.vespeneRefinery) {
+            Scipio.vespeneRefinery = game.neutral.getUnits.asScala
+                .exists(_.getType.isRefinery)
+        }
+
+        if (Scipio.idleWorkers.nonEmpty) {
+            val separatedIdle: List[(ScUnit, Jobs)] = Scipio.separateIdleWorkers(Scipio.idleWorkers, 3-Scipio.gasWorkers.size, (mineral, gas))
+            val newMineralWorkers: List[ScUnit] = separatedIdle.filter(_._2 == mineral).map(_._1)
+            val newGasWorkers: List[ScUnit] = separatedIdle.filter(_._2 == gas).map(_._1)
+
+            WorkerController.applyJob(newMineralWorkers, Scipio.mineralList)
+            WorkerController.applyJob(newGasWorkers, Scipio.vespeneList)
+            Scipio.miningWorkers = Scipio.miningWorkers:::newMineralWorkers
+            Scipio.gasWorkers = Scipio.gasWorkers:::newGasWorkers
+        }
+
+        production.update(game, self)
     }
 }
 
 object Scipio {
+    var idleWorkers: List[ScUnit] = _
+    var miningWorkers: List[ScUnit] = _
+    var gasWorkers: List[ScUnit] = _
+
+    var vespeneList: Buffer[ScUnit] = _
+    var mineralList: Buffer[ScUnit] = _
+
+    var commandCenterList: Buffer[ScUnit] = _
+
+    var vespeneRefinery: Boolean = _
+
     def main(args: Array[String]): Unit =
         new Scipio().run()
+
+    def separateIdleWorkers(workers: List[ScUnit], openJobs: Int, jobs: (Jobs, Jobs)): List[(ScUnit, Jobs)] = workers match {
+        case Nil => Nil
+        case head::tail => if (workers.size > openJobs - 1)
+            (head, jobs._1)::separateIdleWorkers(tail, openJobs, jobs)
+        else
+            (head, jobs._2)::separateIdleWorkers(tail, openJobs-1, jobs)
+    }
 }

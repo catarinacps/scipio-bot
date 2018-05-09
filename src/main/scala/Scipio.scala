@@ -68,7 +68,7 @@ class Scipio extends DefaultBWListener {
             Scipio.gasWorkers = Scipio.gasWorkers:::newGasWorkers
         }
 
-        production.update(game, self)
+        production.update(game, self,None)
     }
 }
 

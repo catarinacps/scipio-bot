@@ -1,94 +1,80 @@
 import bwapi.{Unit => ScUnit, _}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
+import scala.collection.mutable.Buffer
 import scala.collection.mutable.Stack
 
 class ProductionController {
-    var queue: Stack[UnitType] = new Stack[UnitType]()
-    var done: Boolean = true
-    var ordered: Boolean = false
     var work: Int = 0
     var minerals: Int = 100
     var safety: Int = 0
 
     def initialization(): Unit = {
-        println("Initializing build order")
-        queue.push(UnitType.Terran_Refinery)
+        println("Deprecated")
+        //queue.push(UnitType.Terran_Refinery)
     }
 
-    def update(game: Game, player: Player) {
-        val workerManager = new WorkerManager(game, player)
-        val buildingManager = new BuildingManager(game, player)
-        val numberOfWorkers: Int = player.getUnits.asScala.filter(_.getType.isWorker).size
-
+    def update(game: Game, player: Player, maybeOrders: Option[Buffer[UnitType]]) {
+        //val numberOfWorkers: Int = player.getUnits.asScala.filter(_.getType.isWorker).size
         def currentlyBuilding(): Int = player.getUnits.asScala.count(_.getRemainingBuildTime > 0)
-        //def currentlyTraining() :Int = player.getUnits.asScala.count(_.isTraining)
-        game.drawTextScreen(10, 10, "Number of workers: " + numberOfWorkers)
-
-        //if(currentlyBuilding + currentlyTraining < work){ //useless
-        if (currentlyBuilding < work) { //finished building something so it's safe to check resources//finished building something so it's safe to check resources
+        //game.drawTextScreen(10, 10, "Number of workers: " + numberOfWorkers)
+        if (currentlyBuilding < work) { //finished building something so it's 100% safe to check resources (probably)
             minerals = player.minerals()
-            //work=currentlyBuilding()+currentlyTraining()
-            work = currentlyBuilding()
+            println("Wow it actually got here...")
+            safety = 0
         } else {
-            //println(currentlyBuilding())
             safety += 1
-            if (safety > 100) {
-                safety =- 1
+            if (safety > 100) { //maybe its safe to check resources cuz it's been a while
+                safety = -100
                 minerals = player.minerals()
             }
         }
-        //add something to queue based on resources count; if safety<0 there may be resources discrepancies
-        //placeholder
-        if (game.canMake(UnitType.Terran_SCV))
-            queue.push(UnitType.Terran_SCV)
-        else if (game.canMake(UnitType.Terran_Supply_Depot))
-            queue.push(UnitType.Terran_Supply_Depot)
-        //end placeholder
-        issueBuildingOrders(game, player)
-        //do something based on what's still in queue (order was maintained)
-        //placeholder
-        queue.clear()
-        //end placeholder
+        work = currentlyBuilding()
+        //if safety < 0 there may be resources discrepancies
+        maybeOrders match{
+            case Some(orders) => issueBuildingOrders(game, player, orders)
+            case None =>        //if there are no orders it just updates resources
+        }
     }
 
-    def issueBuildingOrders(game: Game, player: Player): Unit = {
+    def issueBuildingOrders(game: Game, player: Player, orders: Buffer[UnitType]): Unit = {
         val workerManager = new WorkerManager(game, player)
         val buildingManager = new BuildingManager(game, player)
         var nextBuild: UnitType = UnitType.None
-        if (queue.nonEmpty) {
-            nextBuild = queue.pop()
+        def somethingIsWrong(): Unit = {issueBuildingOrders(game, player, orders); orders.prepend(nextBuild)}
+        if (orders.nonEmpty) {
+            nextBuild = orders.head
+            orders.trimStart(1) //pop head
             game.drawTextScreen(10, 230, "Next build: " + nextBuild.toString)
-            if (game.canMake(nextBuild)) {
+            if (game.canMake(nextBuild)) {  //sometimes this works
                 nextBuild match {
                     case UnitType.Terran_SCV => if (minerals >= 50) {
-                        workerManager.addWorker();
-                        minerals -= 50;
+                        workerManager.addWorker()
+                        minerals -= 50
                         work += 1
-                    }
+                    }else somethingIsWrong()
                     case UnitType.Terran_Refinery => if (minerals >= 100) {
-                        println("Rubberband man incoming!");
-                        buildingManager.add(nextBuild);
-                        minerals -= 100;
+                        println("Rubberband man incoming!")
+                        buildingManager.add(nextBuild)
+                        minerals -= 100
                         work += 1
-                    }
+                    }else somethingIsWrong()
                     //{println("Hey all, prepare yourselves for the rubberband man");buildingManager.add(nextBuild); ordered = true}
                     //if(minerals < 100 && ordered == true){ done=true; ordered = false}
                     case UnitType.Terran_Supply_Depot => if (minerals >= 100) {
-                        println("MOAR SPACE");
-                        buildingManager.add(nextBuild);
-                        minerals -= 100;
+                        println("MOAR SPACE")
+                        buildingManager.add(nextBuild)
+                        minerals -= 100
                         work += 1
-                    }
+                    }else somethingIsWrong()
                     case _ => println("yay")
                 }
-                issueBuildingOrders(game, player)
+                if(safety>=0)   //if it isn't safe it will only try one order
+                    issueBuildingOrders(game, player,orders)
             }
-            else {
-                //try the next unit in queue, pushes back
-                issueBuildingOrders(game, player)
-                queue.push(nextBuild)
-            }
+            else
+                somethingIsWrong()
         }
     }
 }

@@ -278,3 +278,6 @@ TSWLatexianTemp*
 
 # standalone packages
 *.sta
+.idea/
+scalabot.iml
+project/scalabot-build.iml

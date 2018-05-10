@@ -11,22 +11,19 @@ import scala.collection.mutable._
 object Workers {
     import Jobs._
 
+    var idleWorkers: List[ScUnit] = _
+    var miningWorkers: List[ScUnit] = _
+    var gasWorkers: List[ScUnit] = _
+
     def controller(minerals: Buffer[ScUnit], gasRefs: Buffer[ScUnit])(wenum: Jobs): List[ScUnit] => List[Any] = {
         def applyGather(resources: Buffer[ScUnit])(workerList: List[ScUnit]): List[Boolean] = workerList match {
             case Nil => Nil
-            case head::tail =>
+            case head :: tail =>
                 head.gather(resources
                     .map(r => (r.getDistance(head), r))
                     .sortBy(_._1)
                     .map(_._2)
-                    .head)::applyGather(resources)(tail)
-        }
-
-        // Maybe take out this function?
-        def applyBuild(build: List[UnitType], pos: List[TilePosition])(workerList: List[ScUnit]): List[Boolean] = workerList match {
-            case Nil => Nil
-            case head::tail =>
-                head.build(build.head, pos.head)::applyBuild(build.tail, pos.tail)(tail)
+                    .head) :: applyGather(resources)(tail)
         }
 
         wenum match {
@@ -34,6 +31,19 @@ object Workers {
             case Jobs.gas => return applyGather(gasRefs)
             //case Jobs.build => return applyBuild()
         }
+    }
+
+    def separateIdleWorkers(workers: List[ScUnit], openJobs: Int, jobs: (Jobs, Jobs)): List[(ScUnit, Jobs)] = workers match {
+        case Nil => Nil
+        case head :: tail => if (workers.size > openJobs - 1)
+            (head, jobs._1) :: separateIdleWorkers(tail, openJobs, jobs)
+        else
+            (head, jobs._2) :: separateIdleWorkers(tail, openJobs - 1, jobs)
+    }
+
+    def build(buildOrder: List[(UnitType, TilePosition)], workerList: List[ScUnit]): List[Boolean] = workerList match {
+        case Nil => Nil
+        case head :: tail => head.build(buildOrder.head._1, buildOrder.head._2) :: build(buildOrder.tail, tail)
     }
 
     /*def update(): Unit = {

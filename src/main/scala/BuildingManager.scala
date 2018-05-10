@@ -1,44 +1,10 @@
 import bwapi.{Unit => ScUnit, _}
 
-import scala.collection.JavaConverters._
+import scala.collection.mutable.Buffer
 
-class BuildingManager(game: Game, player: Player) {
-
-    def findClosestGeyser(): Unit = {
-        /*    if(!geysersList.isEmpty) {
-              println("Atta boy")
-              val start: Position = player.getStartLocation.toPosition
-              val dist: Int = geysersList.head.getDistance(start)
-
-              if (dist < minDist) {
-                println("dist: " + dist)
-                findClosestGeyser(geysersList.tail, dist, geysersList.indexOf(geysersList.head))
-              }
-              else {
-                println("far!")
-                findClosestGeyser(geysersList.tail, minDist, index)
-              }
-            }
-            else{
-              if(index != -1){
-                println("Index:" + geysersList(0).toString)
-                val pos : TilePosition =  geysersList(index).getTilePosition
-                println("Done~ pos:" + pos.toString)
-                return pos
-              }
-              else
-                print("?:::")
-              val pos : TilePosition =  geysersList(index).getTilePosition
-              println("Done~ pos:" + pos.toString)
-              return pos
-
-            }*/
-        val start: Position = player.getStartLocation.toPosition
-        val geyser: Unit = game.neutral.getUnits.asScala.filter(_.getType == bwapi.UnitType.Resource_Vespene_Geyser)
-            .map(resource => (resource.getDistance(start), resource))
-            .sortBy(_._1)
-            .map(_._2).head
-        return geyser
+object BuildingManager {
+    def findClosestGeyser(pos: Position, geysers: Buffer[ScUnit]): ScUnit = {
+        return geysers.map(r => (r.getDistance(pos), r)).sortBy(_._1).map(_._2).head
     }
 
     def add(building: UnitType) {
@@ -60,5 +26,14 @@ class BuildingManager(game: Game, player: Player) {
         }
     }
 
-
+    def getBuildPosition(orders: List[UnitType], game: Game): List[(UnitType, TilePosition)] = orders match {
+        case Nil => Nil
+        case head :: tail => head match {
+            case bwapi.UnitType.Terran_Refinery =>
+                (head, findClosestGeyser(Scipio.startLocation, Scipio.geyserList).getTilePosition) :: getBuildPosition(tail, game)
+            case bwapi.UnitType.Terran_Supply_Depot =>
+                (head, game.getBuildLocation(head, Scipio.startLocation.toTilePosition)) :: getBuildPosition(tail, game)
+            case _ => getBuildPosition(tail, game)
+        }
+    }
 }

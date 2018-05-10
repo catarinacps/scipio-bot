@@ -2,7 +2,6 @@ import Jobs._
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
 
-import scala.annotation.tailrec
 import scala.collection.JavaConverters._
 import scala.collection.mutable._
 
@@ -10,8 +9,7 @@ class Scipio extends DefaultBWListener {
     val mirror = new Mirror()
     var game: Game = _
     var self: Player = _
-
-    var production = new ProductionController()
+    var enemy: Player = _
 
     def run(): Unit = {
         mirror.getModule.setEventListener(this)
@@ -25,6 +23,7 @@ class Scipio extends DefaultBWListener {
     override def onStart(): Unit = {
         game = mirror.getGame
         self = game.self()
+        enemy = game.enemy()
 
         //Use BWTA to analyze map
         //This may take a few minutes if the map is processed first time!
@@ -32,66 +31,87 @@ class Scipio extends DefaultBWListener {
         BWTA.readMap()
         BWTA.analyze()
         System.out.println("Map data ready")
-        production.initialization()
+
+        Scipio.initializeGameVariables(self)
+        BuildOrder.orderList = BuildOrder.initializeOrders
     }
 
     override def onFrame(): Unit = {
-        Scipio.idleWorkers = self.getUnits.asScala
-            .filter(u => u.getType.isWorker && u.isIdle)
-            .toList
-        Scipio.mineralList = game.neutral.getUnits.asScala
-            .filter(_.getType.isMineralField)
-        Scipio.vespeneList = game.neutral.getUnits.asScala
-            .filter(_.getType.isRefinery)
+        Workers.idleWorkers = Scipio.getIdleWorkers(self)
 
-        Scipio.commandCenterList = self.getUnits.asScala
-            .filter(u => u.getType == UnitType.Terran_Command_Center && !u.isTraining)
+        Production.minerals = Scipio.getCurrentMinerals(self)
+        Production.gas = Scipio.getCurrentGas(self)
+
+        Scipio.mineralList = Scipio.getMineralsInSight(game)
+        Scipio.geyserList = Scipio.getGeysersInSight(game)
+        Scipio.commandCenterList = Scipio.getCommandCenters(self)
+
+        /*Scipio.commandCenterList = self.getUnits.asScala
+            .filter(u => u.getType == UnitType.Terran_Command_Center && !u.isTraining)*/
+
 
         if (!Scipio.vespeneRefinery) {
             Scipio.vespeneRefinery = game.neutral.getUnits.asScala
                 .exists(_.getType.isRefinery)
         }
 
-        if (Scipio.idleWorkers.nonEmpty) {
-            val separatedIdle: List[(ScUnit, Jobs)] = Scipio.separateIdleWorkers(Scipio.idleWorkers, 3-Scipio.gasWorkers.size, (mineral, gas))
-            val newMineralWorkers: List[ScUnit] = separatedIdle.filter(_._2 == mineral).map(_._1)
-            val newGasWorkers: List[ScUnit] = separatedIdle.filter(_._2 == gas).map(_._1)
+        if (Workers.idleWorkers.nonEmpty) {
+            val separatedIdle = Workers.separateIdleWorkers(Workers.idleWorkers, 3 - Workers.gasWorkers.size, (mineral, gas))
+            val newMineralWorkers = separatedIdle.filter(_._2 == mineral).map(_._1)
+            val newGasWorkers = separatedIdle.filter(_._2 == gas).map(_._1)
 
-            val workerController = Workers.controller(Scipio.mineralList, Scipio.vespeneList)
+            val workerController = Workers.controller(Scipio.mineralList, Scipio.geyserList)
             val gatherMinerals = workerController(Jobs.mineral)
             val gatherGas = workerController(Jobs.gas)
 
             gatherMinerals(newMineralWorkers)
             gatherGas(newGasWorkers)
 
-            Scipio.miningWorkers = Scipio.miningWorkers:::newMineralWorkers
-            Scipio.gasWorkers = Scipio.gasWorkers:::newGasWorkers
+            Workers.miningWorkers = Workers.miningWorkers ::: newMineralWorkers
+            Workers.gasWorkers = Workers.gasWorkers ::: newGasWorkers
         }
 
-        production.update(game, self,None)
+        Production.update(game, self, None)
     }
 }
 
 object Scipio {
-    var idleWorkers: List[ScUnit] = _
-    var miningWorkers: List[ScUnit] = _
-    var gasWorkers: List[ScUnit] = _
+    var startLocation: Position = _
 
-    var vespeneList: Buffer[ScUnit] = _
+    var current
+
+    var geyserList: Buffer[ScUnit] = _
     var mineralList: Buffer[ScUnit] = _
 
     var commandCenterList: Buffer[ScUnit] = _
 
     var vespeneRefinery: Boolean = _
 
+    // The following functions are not referentially transparent at all
+    def getIdleWorkers(self: Player): List[ScUnit] = self.getUnits.asScala
+        .filter(u => u.getType.isWorker && u.isIdle)
+        .toList
+
+    def getMineralsInSight(game: Game): Buffer[ScUnit] = game.neutral.getUnits.asScala
+        .filter(_.getType.isMineralField)
+
+    def getGeysersInSight(game: Game): Buffer[ScUnit] = game.neutral.getUnits.asScala
+        .filter(_.getType == bwapi.UnitType.Resource_Vespene_Geyser)
+
+    def getCommandCenters(self: Player): Buffer[ScUnit] = self.getUnits.asScala
+        .filter(_.getType == UnitType.Terran_Command_Center)
+
+    def getCurrentMinerals(self: Player): Int = self.minerals
+
+    def getCurrentGas(self: Player): Int = self.gas
+
+    def initializeGameVariables(self: Player): Unit = {
+        Scipio.startLocation = self.getStartLocation.toPosition
+        Production.minerals = 100
+    }
+
+    // end of not referentially transparent functions
+
     def main(args: Array[String]): Unit =
         new Scipio().run()
-
-    def separateIdleWorkers(workers: List[ScUnit], openJobs: Int, jobs: (Jobs, Jobs)): List[(ScUnit, Jobs)] = workers match {
-        case Nil => Nil
-        case head::tail => if (workers.size > openJobs - 1)
-            (head, jobs._1)::separateIdleWorkers(tail, openJobs, jobs)
-        else
-            (head, jobs._2)::separateIdleWorkers(tail, openJobs-1, jobs)
-    }
 }

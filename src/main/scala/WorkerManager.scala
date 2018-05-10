@@ -1,10 +1,8 @@
-import bwapi.{Game, Player, UnitType}
+import bwapi.{Unit => ScUnit, _}
 import scala.collection.JavaConverters._
 
-class WorkerManager(game: Game, player: Player) {
-  def addWorker(){
-      player.getUnits.asScala
-        .filter(u => (u.getType == UnitType.Terran_Command_Center)&&(!u.isTraining))  //Builds a worker in each command center! Must be reworked!
-        .head.train(UnitType.Terran_SCV)
-  }
+object WorkerManager {
+    def trainUnit(commandCenter: ScUnit, unit: UnitType): Boolean = {
+        return commandCenter.train(unit)
+    }
 }

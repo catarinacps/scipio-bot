@@ -26,14 +26,14 @@ object BuildingManager {
         }
     }
 
-    def getBuildPosition(orders: List[UnitType], game: Game): List[(UnitType, TilePosition)] = orders match {
+    def getBuildPosition(game: Game, orders: List[UnitType]): List[(UnitType, TilePosition)] = orders match {
         case Nil => Nil
         case head :: tail => head match {
             case bwapi.UnitType.Terran_Refinery =>
-                (head, findClosestGeyser(Scipio.startLocation, Scipio.geyserList).getTilePosition) :: getBuildPosition(tail, game)
+                (head, findClosestGeyser(Scipio.startLocation, Scipio.geyserList).getTilePosition) :: getBuildPosition(game, tail)
             case bwapi.UnitType.Terran_Supply_Depot =>
-                (head, game.getBuildLocation(head, Scipio.startLocation.toTilePosition)) :: getBuildPosition(tail, game)
-            case _ => getBuildPosition(tail, game)
+                (head, game.getBuildLocation(head, Scipio.startLocation.toTilePosition)) :: getBuildPosition(game, tail)
+            case _ => getBuildPosition(game, tail)
         }
     }
 }

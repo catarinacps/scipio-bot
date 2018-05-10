@@ -71,14 +71,12 @@ class Scipio extends DefaultBWListener {
             Workers.gasWorkers = Workers.gasWorkers ::: newGasWorkers
         }
 
-        Production.update(game, self, None)
+        Production.issueBuildingOrders(game, Some(BuildOrder.orderList))
     }
 }
 
 object Scipio {
     var startLocation: Position = _
-
-    var current
 
     var geyserList: Buffer[ScUnit] = _
     var mineralList: Buffer[ScUnit] = _

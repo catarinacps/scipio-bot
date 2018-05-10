@@ -1,8 +1,8 @@
 import bwapi.{Unit => ScUnit, _}
-import scala.collection.JavaConverters._
 
 object WorkerManager {
-    def trainUnit(commandCenter: ScUnit, unit: UnitType): Boolean = {
-        return commandCenter.train(unit)
+    def trainUnits(commandCenter: ScUnit, units: List[UnitType]): List[Boolean] = units match {
+        case Nil => Nil
+        case head :: tail => commandCenter.train(head) :: trainUnits(commandCenter, tail)
     }
 }

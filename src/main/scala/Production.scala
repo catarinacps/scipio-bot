@@ -10,7 +10,7 @@ object Production {
     private var work: Int = 0
     private var safety: Int = 0
 
-    def update(game: Game, player: Player, maybeOrders: Option[Buffer[UnitType]]) {
+    /*def update(game: Game, player: Player, maybeOrders: Option[Buffer[UnitType]]) {
         //val numberOfWorkers: Int = player.getUnits.asScala.filter(_.getType.isWorker).size
         def currentlyBuilding(): Int = player.getUnits.asScala.count(_.getRemainingBuildTime > 0)
         //game.drawTextScreen(10, 10, "Number of workers: " + numberOfWorkers)
@@ -31,17 +31,60 @@ object Production {
             case Some(orders) => issueBuildingOrders(game, player, orders)
             case None => //if there are no orders it just updates resources
         }
+    }*/
+
+    def issueBuildingOrders(game: Game, orders: Option[List[UnitType]]): List[UnitType] = orders match {
+        case None => Nil
+        case Some(orderList) =>
+            val plausibleBuildOrder = getPossibleBuildingOrders(orderList)
+            val ccOrders = getCommandCenterOrders(plausibleBuildOrder)
+            val buildingOrders = getBuildingOrders(plausibleBuildOrder)
+            val workersToBuild = Workers.miningWorkers.take(buildingOrders.size)
+
+            WorkerManager.trainUnits(Scipio.commandCenterList.head, ccOrders)
+            Workers.build(BuildingManager.getBuildPosition(game, buildingOrders), workersToBuild)
+
+            return removeFromOrderedList[UnitType](orderList, plausibleBuildOrder)
     }
 
-    def issueBuildingOrders(game: Game, orders: List[UnitType]): List[UnitType] = orders match {
+    private def getCommandCenterOrders(orders: List[UnitType]): List[UnitType] = orders match {
         case Nil => Nil
-        case head :: tail => if (game.canMake(head)) head match {
-            case UnitType.Terran_SCV =>
-
-        } else head :: issueBuildingOrders(game, tail)
+        case head :: tail => head match {
+            case UnitType.Terran_SCV => head :: getCommandCenterOrders(tail)
+            case _ => getCommandCenterOrders(tail)
+        }
     }
 
-    def issueBuildingOrders(game: Game, player: Player, orders: Buffer[UnitType]): Unit = {
+    private def getBuildingOrders(orders: List[UnitType]): List[UnitType] = orders match {
+        case Nil => Nil
+        case head :: tail => head match {
+            case UnitType.Buildings => head :: getBuildingOrders(tail)
+            case _ => getBuildingOrders(tail)
+        }
+    }
+
+    private def removeFromOrderedList[A](orders: List[A], removeList: List[A]): List[A] = orders match {
+        case Nil => Nil
+        case head :: tail => head match {
+            case removeList.head => removeFromOrderedList(tail, removeList.tail)
+            case _ => head :: removeFromOrderedList(tail, removeList)
+        }
+    }
+
+    private def getPossibleBuildingOrders(orders: List[UnitType]): List[UnitType] = orders match {
+        case Nil => Nil
+        case head :: tail => if (canMakeUnit(head)) {
+            minerals -= head.mineralPrice
+            gas -= head.gasPrice
+            head :: getPossibleBuildingOrders(tail)
+        } else getPossibleBuildingOrders(tail)
+    }
+
+    private def canMakeUnit(unit: UnitType): Boolean = {
+        return (minerals - unit.mineralPrice > 0) && (gas - unit.gasPrice > 0)
+    }
+
+    /*def issueBuildingOrders(game: Game, player: Player, orders: Buffer[UnitType]): Unit = {
         val workerManager = new WorkerManager(game, player)
         val buildingManager = new BuildingManager(game, player)
         var nextBuild: UnitType = UnitType.None
@@ -84,5 +127,5 @@ object Production {
             else
                 somethingIsWrong()
         }
-    }
+    }*/
 }

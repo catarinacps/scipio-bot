@@ -3,7 +3,7 @@
 %
 \ProvidesFile{rel_mlp.def}[2016/08/19 Relatório de MLP]
 
-\newcommand{\titlepagespecificinfo} {Implementação de um bot de \textit{Stardraft} utilizando a linguagem Scala{\c{c}}{\~a}o}
+\newcommand{\titlepagespecificinfo} {Relatório apresentado como requisito parcial para a obten{\c{c}}{\~a}o de conceito na Disciplina de Modelos de Linguagens de Programa{\c{c}}{\~a}o}
 \def\@cipspecificinfo{Modelos de Linguagens de Programa{\c{c}}{\~a}o}
 
 \DeclareRobustCommand{\coord}[3][]{

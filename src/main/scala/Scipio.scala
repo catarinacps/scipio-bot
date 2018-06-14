@@ -7,6 +7,10 @@ class Scipio extends DefaultBWListener {
     val mirror = new Mirror()
     var game: Game = _
     var self: Player = _
+    var military: VilicusMilitum = _
+    var workers: VilicusOperarius = _
+    var resources: VilicusOpibus = _
+
 
     def run(): Unit = {
         mirror.getModule.setEventListener(this)
@@ -27,13 +31,16 @@ class Scipio extends DefaultBWListener {
         BWTA.readMap()
         BWTA.analyze()
         System.out.println("Map data ready")
+        military = new VilicusMilitum(game,self)
+        workers = new VilicusOperarius(game,self)
+        resources = new VilicusOpibus(game,self)
+        //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
     override def onFrame(): Unit = {
         //game.setTextSize(10);
         game.drawTextScreen(10, 10, "Playing as " + self.getName + " - " + self.getRace)
-
-
+        /*
         self.getUnits.asScala
             .filter(_.getType == UnitType.Terran_Command_Center && self.minerals >= 50)
             .foreach(_.train(UnitType.Terran_SCV))
@@ -50,7 +57,11 @@ class Scipio extends DefaultBWListener {
                     .headOption
 
                 closestMineral.foreach(worker.gather)
-            }
+            }*/
+        military.connect(game,self)
+        workers.connect(game,self)
+        resources.connect(game,self)    //we have to reconnect because there's no such thing as "pass by reference" here ;( any way to make those vars global?
+
     }
 }
 

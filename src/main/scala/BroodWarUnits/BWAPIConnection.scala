@@ -7,5 +7,7 @@ trait BWAPIConnection {
   def connect(game: Game,self: Player):Unit = {
     this.game=game
     this.self=self
+    getUnits()
   }
+  def getUnits()  //this is abstract
 }

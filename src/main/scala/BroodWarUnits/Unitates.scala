@@ -1,16 +1,20 @@
 package BroodWarUnits
 import scala.collection.JavaConverters._
 import bwapi.Position
+import bwapi.{Unit => ScUnit, _}
 
-abstract class Unitates (myID:Int) extends BWAPIConnection{
-  connect(game,self)
-  protected var ID: Int = _ //Can we make this work? It would help in identifying units
-  def getID: Int = this.ID
+abstract class Unitates(myself:ScUnit){
+  private var me : ScUnit = myself
+  def getID():Int = me.getID
+
+  protected def updateData():Unit   //this method is abstract
+
+  def update(newUnit:ScUnit):Unit={
+    me=newUnit
+    updateData()
+  }
 
   def move(xy:Position):Unit={  //polymorphism by inclusion :) (cuz every unit can move)
-    //TODO:this
-    /*var theUnits = self.getUnits.asScala
-    while(theUnits.)*/
-
+    me.move(xy)
   }
 }

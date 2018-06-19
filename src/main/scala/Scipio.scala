@@ -40,6 +40,7 @@ class Scipio extends DefaultBWListener {
     override def onFrame(): Unit = {
         //game.setTextSize(10);
         game.drawTextScreen(10, 10, "Playing as " + self.getName + " - " + self.getRace)
+
         /*
         self.getUnits.asScala
             .filter(_.getType == UnitType.Terran_Command_Center && self.minerals >= 50)
@@ -59,8 +60,8 @@ class Scipio extends DefaultBWListener {
                 closestMineral.foreach(worker.gather)
             }*/
         military.connect(game,self)
-        workers.connect(game,self)
-        resources.connect(game,self)    //we have to reconnect because there's no such thing as "pass by reference" here ;( any way to make those vars global?
+        workers.connect(game,self)    //we have to reconnect because there's no such thing as "pass by reference" here ;(
+        resources.connect(game,self)    //each module must reaquire the game and player handles to update its data
 
     }
 }

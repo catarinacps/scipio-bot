@@ -59,7 +59,7 @@ class Scipio extends DefaultBWListener {
 
                 closestMineral.foreach(worker.gather)
             }*/
-        print("Allez")
+        print("On frame\n")
         military.connect(game,self)
         workers.connect(game,self)    //we have to reconnect because there's no such thing as "pass by reference" here ;(
         resources.connect(game,self)    //each module must require the game and player handles to update its data

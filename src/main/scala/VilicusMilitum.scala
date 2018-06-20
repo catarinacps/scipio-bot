@@ -6,12 +6,12 @@ import bwapi._
   * are being trained and any new request for new soldiers. And patrols.
   */
 class VilicusMilitum(gameCons: Game,selfCons: Player) extends BWAPIConnection{
-  connect(gameCons,selfCons) //this will run on instantiation
+  //connect(gameCons,selfCons) //this will run on instantiation
   def startPatrolAt(building:Domus)={ //assigns a unit to patrol this building
     //TODO: this
   }
 
   def getUnits() ={
-    print("flop")
+    print("Military\n")
   }
 }

@@ -1,6 +1,8 @@
 package BroodWarUnits.Militum
-import bwapi.{Unit => ScUnit, _}
-import bwta.BWTA
-class Soldier extends BroodWarUnits.Hominum {
+import bwapi.{Unit => ScUnit}
 
+class Soldier(myself:ScUnit) extends BroodWarUnits.Homo(myself) {
+  def updateData():Unit={
+    print("f")
+  }
 }

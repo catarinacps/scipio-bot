@@ -1,6 +1,4 @@
 package BroodWarUnits.Aedificium
-import bwapi.{Unit => ScUnit, _}
-import bwta.BWTA
-class Barracks extends BroodWarUnits.Domum{
+//class Barracks extends BroodWarUnits.Domus{
 
-}
+//}

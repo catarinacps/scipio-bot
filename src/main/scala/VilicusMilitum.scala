@@ -1,6 +1,5 @@
-import bwapi.{Unit => ScUnit, _}
-import bwta.BWTA
-import BroodWarUnits.{BWAPIConnection, Domum, Militum}
+import BroodWarUnits.{BWAPIConnection, Domus}
+import bwapi._
 /** The soldier controller class.
   *
   * It manages how many soldier are active, how many soldiers
@@ -8,7 +7,11 @@ import BroodWarUnits.{BWAPIConnection, Domum, Militum}
   */
 class VilicusMilitum(gameCons: Game,selfCons: Player) extends BWAPIConnection{
   connect(gameCons,selfCons) //this will run on instantiation
-  def startPatrolAt(building:Domum):Unit ={ //assigns a unit to patrol this building
+  def startPatrolAt(building:Domus)={ //assigns a unit to patrol this building
     //TODO: this
+  }
+
+  def getUnits() ={
+    print("flop")
   }
 }

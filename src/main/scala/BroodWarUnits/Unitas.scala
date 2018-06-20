@@ -1,9 +1,9 @@
 package BroodWarUnits
-import scala.collection.JavaConverters._
-import bwapi.Position
-import bwapi.{Unit => ScUnit, _}
+import bwapi.{Position, Unit => ScUnit}
 
-abstract class Unitates(myself:ScUnit){
+import scala.collection.JavaConverters._
+
+abstract class Unitas(myself:ScUnit){
   private var me : ScUnit = myself
   def getID():Int = me.getID
 

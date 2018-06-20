@@ -8,8 +8,8 @@ class Scipio extends DefaultBWListener {
     var game: Game = _
     var self: Player = _
     var military: VilicusMilitum = _
-    var workers: VilicusOperarius = _
-    var resources: VilicusOpibus = _
+    var workers: VilicusOperariorum = _
+    var resources: VilicusOpum = _
 
 
     def run(): Unit = {
@@ -32,8 +32,8 @@ class Scipio extends DefaultBWListener {
         BWTA.analyze()
         System.out.println("Map data ready")
         military = new VilicusMilitum(game,self)
-        workers = new VilicusOperarius(game,self)
-        resources = new VilicusOpibus(game,self)
+        workers = new VilicusOperariorum(game,self)
+        resources = new VilicusOpum(game,self)
         //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
@@ -59,14 +59,17 @@ class Scipio extends DefaultBWListener {
 
                 closestMineral.foreach(worker.gather)
             }*/
+        print("Allez")
         military.connect(game,self)
         workers.connect(game,self)    //we have to reconnect because there's no such thing as "pass by reference" here ;(
-        resources.connect(game,self)    //each module must reaquire the game and player handles to update its data
+        resources.connect(game,self)    //each module must require the game and player handles to update its data
 
     }
 }
 
 object Scipio {
-    def main(args: Array[String]): Unit =
+    def main(args: Array[String]): Unit ={
         new Scipio().run()
+    }
+
 }

@@ -1,34 +1,40 @@
-import bwapi.{Unit => ScUnit, _}
-import bwta.BWTA
+import BroodWarUnits.BWAPIConnection
+import BroodWarUnits.Operarius._
+import bwapi._
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
-import BroodWarUnits.Operarius._
-
-import BroodWarUnits.{BWAPIConnection, Operarius}
 /** The worker controller class.
   *
   * It manages how many workers are active, how many minerals
   * are being gathered and any new request for new workers.
   */
-class VilicusOperarius(gameCons: Game,selfCons: Player) extends BWAPIConnection{
+class VilicusOperariorum(gameCons: Game, selfCons: Player) extends BWAPIConnection{
   connect(gameCons,selfCons) //this will run on instantiation
   var workerList : ListBuffer[Operario] = _
 
   //this method handles the add or update of all units under this controllers care
-  def getUnits(): Unit ={ //overrides abstract method
+  def getUnits() ={ //overrides abstract method
+    print("Here I am\n")
     val allUnits = self.getUnits.asScala
     for(i <- allUnits){
       if(i.getType == UnitType.Terran_SCV){
+        print("found a worker\n")
         if(!workerList.exists(_.getID() == i.getID)){
+          print("does not exist")
           workerList+= new Operario(i)
           workerList.last.update(i)
+          print("it does now")
         }else{
+          print("Will update")
           workerList.find(_.getID() == i.getID).get.update(i)
+          print("Updated")
         }
       }
     }
-    //TODO: add part where it issues orders from workerList
   }
+
+  //TODO: add part where it issues orders from workerList
 
 
 }

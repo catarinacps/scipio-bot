@@ -1,6 +1,7 @@
 import BroodWarUnits.BWAPIConnection
 import BroodWarUnits.Operarius._
 import bwapi._
+import scala.util.control.Breaks._
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
@@ -18,6 +19,7 @@ class VilicusOperariorum(gameCons: Game, selfCons: Player) extends BWAPIConnecti
     //print("Workers\n")
     //print("wtf "+workerList.filter(_.getID()>=0).isEmpty) //problematic
     val allUnits = self.getUnits.asScala
+    val gameUnits = game.neutral.getUnits.asScala
     for(i <- allUnits){
       if(i.getType == UnitType.Terran_SCV){
         if(!workerList.isEmpty){ //if the list is not empty
@@ -25,11 +27,24 @@ class VilicusOperariorum(gameCons: Game, selfCons: Player) extends BWAPIConnecti
             workerList+= new Operario(i)
             workerList.last.update(i)
           }else{  //if it IS on the list
-            workerList.find(_.getID() == i.getID).get.update(allUnits(i))
+            workerList.find(_.getID() == i.getID).get.update(i)
           }
         }else{  //if the list is empty (therefore its not on the list)
           workerList+= new Operario(i)
           workerList.last.update(i)
+        }
+      }
+    }
+    for(worker <- workerList){
+      if(worker.isIdle){
+        print(worker.getID+", we have work for you\n")
+        for(i <- gameUnits){
+          print("hm...\n")
+          if(i.getType.isMineralField && i.isVisible(self)){
+            print("gather!")
+            worker.gather(i)
+            break
+          }
         }
       }
     }

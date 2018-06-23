@@ -7,7 +7,9 @@ import bwapi.{Unit => ScUnit}
 class Operario (myself:ScUnit) extends BroodWarUnits.Homo(myself){
 
   override def updateData():Unit={
-    //TODO:this
+
   }
+  def isIdle:Boolean=me.isIdle
+  def gather(mineral:ScUnit):Boolean=me.gather(mineral)
   //TODO: add enums as states to validate delay between issuing commands and taking action
 }

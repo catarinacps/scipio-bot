@@ -9,16 +9,40 @@ import scala.collection.JavaConverters._
   */
 class VilicusOpum(gameCons: Game, selfCons: Player)  extends BWAPIConnection{
   //connect(gameCons,selfCons) //this will run on instantiation
-  def getUnits() ={
+  val allUnits = self.getUnits.asScala
+  val gameUnits = game.neutral.getUnits.asScala
+
+  def getUnits() ={ //Appele touts frames
     print("Resources\n")
-    val allUnits = self.getUnits.asScala
-    val gameUnits = game.neutral.getUnits.asScala
-    for(i <- allUnits){
-      if(i.getType==UnitType.Terran_Command_Center){
-        print("moar workers\n")
-        i.train(UnitType.Terran_SCV)
-      }
+    //build order things
+    if(self.minerals() >= 100){
+      buildBuilding(UnitType.Terran_Refinery)
     }
 
   }
+
+  def trainUnit(unitType: UnitType) ={
+    for(i <- allUnits){
+      if(i.getType==UnitType.Terran_Command_Center && i.isTraining == false){
+        print("moar workers\n")
+        i.train(unitType)
+      }
+    }
+  }
+
+  def buildBuilding(unitType: UnitType)={
+    for(i <- allUnits){
+      if(i.getType==UnitType.Resource_Vespene_Geyser){
+        print("refinary\n")
+        for(u <- allUnits){
+          print("all units")
+          if(u.getType == UnitType.Terran_SCV && u.isConstructing){
+            print("found worker")
+            u.build(unitType,i.getTilePosition)
+          }
+        }
+      }
+    }
+  }
+
 }

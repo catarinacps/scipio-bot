@@ -39,7 +39,6 @@ class VilicusOperariorum(gameCons: Game, selfCons: Player) extends BWAPIConnecti
       if(worker.isIdle){
         print(worker.getID+", we have work for you\n")
         for(i <- gameUnits){
-          print("hm...\n")
           if(i.getType.isMineralField && i.isVisible(self)){
             print("gather!")
             worker.gather(i)

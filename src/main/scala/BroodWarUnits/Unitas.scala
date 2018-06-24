@@ -1,20 +1,18 @@
 package BroodWarUnits
-import bwapi.{Position, Unit => ScUnit}
+import bwapi.{Game, Position, Unit => ScUnit}
 
 import scala.collection.JavaConverters._
 
-abstract class Unitas(myself:ScUnit){
-  protected var me : ScUnit = myself
+abstract class Unitas{
+  protected var me : ScUnit = _
   def getID():Int = me.getID
 
-  protected def updateData():Unit   //this method is abstract
+  protected def updateData(game : Game):Unit   //this method is abstract
 
   def update(newUnit:ScUnit):Unit={
     me=newUnit
     updateData()
   }
 
-  def move(xy:Position):Unit={  //polymorphism by inclusion :) (cuz every unit can move)
-    me.move(xy)
-  }
+
 }

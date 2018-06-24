@@ -70,7 +70,7 @@ class Scipio extends DefaultBWListener {
 
         military.update(ownUnits, neutralUnits)
         workers.update(ownUnits, neutralUnits) //we have to reconnect because there's no such thing as "pass by reference" here ;(
-        resources.update(ownUnits, neutralUnits, workers.getIdleWorkers) //each module must require the game and player handles to update its data
+        resources.update(ownUnits, neutralUnits, workers.getGatheringWorkers) //each module must require the game and player handles to update its data
     }
 
     def updateFrame(): Unit = {

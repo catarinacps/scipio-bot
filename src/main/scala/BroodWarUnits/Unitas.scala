@@ -4,15 +4,11 @@ import bwapi.{Game, Position, Unit => ScUnit}
 
 import scala.collection.JavaConverters._
 
-abstract class Unitas {
-    protected var me: ScUnit = _
-
+abstract class Unitas(gameCons:Game){
+    var me: ScUnit = _
+    var game:Game=gameCons
     def getID: Int = me.getID
 
-    protected def updateData(game: Game): Unit //this method is abstract
+    def update(newUnit: ScUnit,game: Game):Unit //this is abstract
 
-    def update(newUnit: ScUnit): Unit = {
-        me = newUnit
-        updateData()
-    }
 }

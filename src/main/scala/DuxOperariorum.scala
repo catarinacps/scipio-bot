@@ -24,26 +24,39 @@ class DuxOperariorum extends BWAPIConnection {
         for (i <- ownUnits) {
             if (i.getType == UnitType.Terran_SCV) {
                 if (workerList.nonEmpty) { //if the list is not empty
-                    if (workerList.find(_.getID() == i.getID).isEmpty) { //if its not on the list
-                        val worker = new Operario(i)
+                    if (workerList.find(_.getID == i.getID).isEmpty) { //if its not on the list
+                        val worker = new Operario(i,game)
                         workerList += worker
-                        workerList.last.update(i)
+                        workerList.last.update(i,game)
                         idleWorkers += worker
 
                     } else { //if it IS on the list
-                        val wk = workerList.find(_.getID() == i.getID).get
-                        wk.update(i)
+                        val wk = workerList.find(_.getID == i.getID).get
+                        wk.update(i,game)
                         if (wk.isIdle) {
                             idleWorkers += wk
                         }
 
                     }
                 } else { //if the list is empty (therefore its not on the list)
-                    workerList += new Operario(i)
-                    workerList.last.update(i)
+                    workerList += new Operario(i,game)
+                    workerList.last.update(i,game)
                 }
             }
         }
+      if (self.minerals() >= 50) {
+        trainUnit(UnitType.Terran_SCV)
+      }
+      gather(ownUnits,neutralUnits)
+    }
+
+    def trainUnit(unitType: UnitType):Unit = {
+      for (i <- self.getUnits.asScala) {
+        if (i.getType == UnitType.Terran_Command_Center && !i.isTraining) {
+          print("moar workers\n")
+          i.train(unitType)
+        }
+      }
     }
 
     def gather(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = {
@@ -56,13 +69,15 @@ class DuxOperariorum extends BWAPIConnection {
                         worker.gather(i)
                         gatheringWorkers += worker
                         idleWorkers -= worker
+                        gatheringWorkers=gatheringWorkers.distinct
+                        idleWorkers=idleWorkers.distinct
                         break
                     }
                 }
             }
         }
     }
-
+    def getGatheringWorkers: ListBuffer[Operario] = this.gatheringWorkers
     def getIdleWorkers: ListBuffer[Operario] = this.idleWorkers
 
     //TODO: add part where it issues orders from workerList

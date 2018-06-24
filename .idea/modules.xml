@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scipio-bot.iml" filepath="$PROJECT_DIR$/.idea/modules/scipio-bot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scipio-bot.iml" filepath="$PROJECT_DIR$/.idea/modules/scipio-bot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scipio-bot-build.iml" filepath="$PROJECT_DIR$/.idea/modules/scipio-bot-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scipio-bot-build.iml" filepath="$PROJECT_DIR$/.idea/modules/scipio-bot-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scipio.iml" filepath="$PROJECT_DIR$/.idea/modules/scipio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scipio-build.iml" filepath="$PROJECT_DIR$/.idea/modules/scipio-build.iml" />
     </modules>
   </component>
 </project>

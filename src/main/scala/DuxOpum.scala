@@ -19,32 +19,31 @@ class DuxOpum(startPos: TilePosition) extends BWAPIConnection {
     var neutralUnits: Buffer[ScUnit] = Buffer()
     var buildings: ListBuffer[Domus] = ListBuffer()
 
-    def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit], idleWorkers: ListBuffer[Operario]):Unit = { //Appele touts frames
+    var hasBuiltBarrack:Boolean = false
+
+    def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit], gatheringWorkers: ListBuffer[Operario]):Unit = { //Appele touts frames
         print("Resources\n")
         //build order things
         this.ownUnits = ownUnits
         this.neutralUnits = neutralUnits
+        print("test ")
+        print(gatheringWorkers.size)
+        print("\n")
 
-        if (self.minerals() >= 100) {
-            // pegar worker
-            // pegar pos
-            buildings += new Barracks(idleWorkers.remove(0), game, startPos)
-
+        if(hasBuiltBarrack==false && self.minerals>=150){
+            print("entrou\n")
+            buildings += new Barracks(gatheringWorkers.remove(0).me, startPos,game)
+            print("passou\n")
+            hasBuiltBarrack=true
+            print("tchau\n")
+        }else if (self.minerals >= 100) {
+            buildings+=new SupplyDepot(gatheringWorkers.remove(0).me, startPos,game)
         }
 
-    }
-
-    def trainUnit(unitType: UnitType):Unit = {
-        for (i <- ownUnits) {
-            if (i.getType == UnitType.Terran_Command_Center && !i.isTraining) {
-                print("moar workers\n")
-                i.train(unitType)
-            }
-        }
     }
 
     def buildBuilding(unitType: UnitType):Unit = {
-        print("refinary\n")
+        print("refinery\n")
         for (i <- ownUnits) {
             if (i.getType == UnitType.Resource_Vespene_Geyser) {
                 for (u <- ownUnits) {

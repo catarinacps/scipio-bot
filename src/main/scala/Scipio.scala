@@ -34,9 +34,9 @@ class Scipio extends DefaultBWListener {
         BWTA.readMap()
         BWTA.analyze()
         System.out.println("Map data ready")
-        military = new DuxMilitum(game,self)
-        workers = new DuxOperariorum(game,self)
-        resources = new DuxOpum(game,self, startPos)
+        military = new DuxMilitum()
+        workers = new DuxOperariorum()
+        resources = new DuxOpum(startPos)
         //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
@@ -65,16 +65,23 @@ class Scipio extends DefaultBWListener {
                 closestMineral.foreach(worker.gather)
             }*/
         print("On frame\n")
-        military.connect(game, self, ownUnits, neutralUnits)
-        workers.connect(game, self, ownUnits, neutralUnits)    //we have to reconnect because there's no such thing as "pass by reference" here ;(
-        resources.connect(game, self, ownUnits, neutralUnits)    //each module must require the game and player handles to update its data
 
+        this.updateFrame()
+
+        military.update(ownUnits, neutralUnits)
+        workers.update(ownUnits, neutralUnits) //we have to reconnect because there's no such thing as "pass by reference" here ;(
+        resources.update(ownUnits, neutralUnits, workers.getIdleWorkers) //each module must require the game and player handles to update its data
+    }
+
+    def updateFrame(): Unit = {
+        military.updateFrame(game, self)
+        workers.updateFrame(game, self)
+        resources.updateFrame(game, self)
     }
 }
 
 object Scipio {
-    def main(args: Array[String]): Unit ={
+    def main(args: Array[String]): Unit = {
         new Scipio().run()
     }
-
 }

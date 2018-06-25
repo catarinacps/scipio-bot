@@ -1,20 +1,26 @@
 package BroodWarUnits.Aedificium
 import scala.collection.JavaConverters._
 import bwapi.{Game, Unit => ScUnit, _}
+/*
+class Barracks(worker: ScUnit, game : Game, startPos : TilePosition) extends BroodWarUnits.Domus{
+  var pos : TilePosition = game.getBuildLocation(UnitType.Terran_Barracks, startPos,100)
+  var myself : ScUnit =
+  def this(worker: ScUnit, game : Game, startPos : TilePosition){
+    this(worker, game, startPos)
+    worker.build(UnitType.Terran_Barracks, pos)
+    //myself = algo
+  }
 
-class Barracks(worker: ScUnit, startPos: TilePosition,gameCons:Game) extends BroodWarUnits.Domus(worker, startPos,UnitType.Terran_Barracks,gameCons){
-    def update(newUnit: ScUnit,game: Game):Unit = {
-      me=newUnit
-      this.game=game
-        //Checks every frame to see if construction has been completed. If so, updates myself
-        if (!myself.exists()) {
-            val units = game.getUnitsOnTile(this.pos).asScala
-            for (item <- units) {
-                if (item.getType == UnitType.Terran_Barracks) {
-                    this.myself = item
-                }
-            }
+  def updateData(game: Game) ={
+    //Checks every frame to see if construction has been completed. If so, updates myself
+    if(!myself.exists()){
+      var units = game.getUnitsOnTile(this.pos)
+      units.forEach(item => {
+        if(item.getType == UnitType.Terran_Barracks){
+          this.myself = item
         }
+      })
     }
+  }
 
-}
+}*/

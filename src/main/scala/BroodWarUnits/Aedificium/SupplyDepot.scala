@@ -3,7 +3,7 @@ import bwapi.{Game, TilePosition, UnitType}
 
 import scala.collection.JavaConverters._
 import bwapi.{Game, Unit => ScUnit, _}
-
+/*
 class SupplyDepot(worker: ScUnit, startPos: TilePosition, gameCons:Game) extends BroodWarUnits.Domus(worker, startPos,UnitType.Terran_Supply_Depot,gameCons){
   override def update(newUnit: bwapi.Unit, game: Game): Unit = {
     me=newUnit
@@ -18,4 +18,4 @@ class SupplyDepot(worker: ScUnit, startPos: TilePosition, gameCons:Game) extends
       }
     }
   }
-}
+}*/

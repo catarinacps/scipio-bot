@@ -12,12 +12,13 @@ import scala.collection.mutable.{Buffer, ListBuffer}
   * It manages how many resources are there, how many buildings
   * exist and any new request for new buildings. Not sure if we need this but it looks cool.
   */
+import BroodWarUnits.Unitas
 class DuxOpum(startPos: TilePosition) extends BWAPIConnection {
     //connect(gameCons,selfCons) //this will run on instantiation
 
     var ownUnits: Buffer[ScUnit] = Buffer()
     var neutralUnits: Buffer[ScUnit] = Buffer()
-    var buildings: ListBuffer[Domus] = ListBuffer()
+    var buildings: ListBuffer[Unitas] = ListBuffer()
 
     var hasBuiltBarrack:Boolean = false
 
@@ -27,17 +28,17 @@ class DuxOpum(startPos: TilePosition) extends BWAPIConnection {
         this.ownUnits = ownUnits
         this.neutralUnits = neutralUnits
         print("test ")
-        print(gatheringWorkers.size)
+        print(gatheringWorkers)
         print("\n")
 
         if(hasBuiltBarrack==false && self.minerals>=150){
             print("entrou\n")
-            buildings += new Barracks(gatheringWorkers.remove(0).me, startPos,game)
+            buildings += new Domus(gatheringWorkers.remove(0).me, startPos,game,UnitType.Terran_Barracks)
             print("passou\n")
             hasBuiltBarrack=true
             print("tchau\n")
         }else if (self.minerals >= 100) {
-            buildings+=new SupplyDepot(gatheringWorkers.remove(0).me, startPos,game)
+            buildings+=new Domus(gatheringWorkers.remove(0).me, startPos,game,UnitType.Terran_Supply_Depot)
         }
 
     }

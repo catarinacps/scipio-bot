@@ -83,14 +83,21 @@ class Scipio extends DefaultBWListener {
                     resources.buildBuilding(building.ut, workers.getGatheringWorkers.remove(0))
                   }catch{
                     case e: Throwable =>
-                      print(e)
+                      e.printStackTrace()
                   }
             }
         }
-         print(self.minerals + "\n")
+         print("\n" + self.minerals + "\n")
         military.update(ownUnits, neutralUnits)
+      try{
         workers.update(ownUnits, neutralUnits)
-        resources.update(ownUnits, neutralUnits)
+
+      }catch{
+        case e: Throwable =>
+
+          e.printStackTrace()
+      }
+      resources.update(ownUnits, neutralUnits)
     }
 
     def updateFrame(): Unit = {

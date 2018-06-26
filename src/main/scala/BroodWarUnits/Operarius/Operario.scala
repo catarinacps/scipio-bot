@@ -10,6 +10,7 @@ class Operario(gameCons: Game) extends BroodWarUnits.Homo(gameCons, UnitType.Ter
 
     def this(myself: ScUnit, gameCons: Game){
       this(gameCons)
+      me = myself
     }
 
     def update(myself: ScUnit, game: Game): Unit = {

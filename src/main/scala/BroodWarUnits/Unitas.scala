@@ -11,7 +11,8 @@ abstract class Unitas(gameCons: Game, param: UnitType) {
     def update(myself: ScUnit, game: Game): Unit //this is abstract
 
     def canDo(self :Player): Boolean ={
-        ut.mineralPrice < self.minerals
+        println(ut.mineralPrice)
+        ut.mineralPrice <= self.minerals
     }
 
 }

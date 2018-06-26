@@ -21,15 +21,11 @@ class DuxOpum(startPos: TilePosition) extends BWAPIConnection {
 
     var hasBuiltBarrack: Boolean = false
 
-    def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit], gatheringWorkers: ListBuffer[Operario]): Unit = { //Appele touts frames
+    def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = { //Appele touts frames
         print("Resources\n")
         //build order things
         this.ownUnits = ownUnits
         this.neutralUnits = neutralUnits
-        print("test ")
-        print(gatheringWorkers)
-        print("\n")
-
     }
 
     def buildBuilding(building: UnitType, worker: Operario): Unit = {

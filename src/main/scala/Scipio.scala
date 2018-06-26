@@ -1,3 +1,4 @@
+import BroodWarUnits.Militum.Soldier
 import BroodWarUnits.Operarius.Operario
 import BroodWarUnits._
 import bwapi.{Unit => ScUnit, _}
@@ -58,21 +59,25 @@ class Scipio extends DefaultBWListener {
         next = whatToBuild.canDo
 
         if (next.isDefined) {
-            if (next.get.isInstanceOf[Homo]) {
-                if (next.get.isInstanceOf[Operario]) { //its a worker
-                    workers.trainUnit(next.get.asInstanceOf[Operario].me.getType)
-                } else { //its a militum
-                    //to be implemented
+            println("Im defined!")
+            next.get match {
+                case organic: Homo => organic match {
+                    case operario: Operario => //its a worker
+                        workers.trainUnit(operario.me.getType)
+                    case militum: Soldier => //its a militum
+                        //to be implemented
+                    case _ =>
+                        //
                 }
-            } else {
-                //Its a domus
-                resources.buildBuilding(next.get.me.getType, workers.getGatheringWorkers.remove(0))
+                case building =>
+                    //Its a domus
+                    resources.buildBuilding(building.me.getType, workers.getGatheringWorkers.remove(0))
             }
         }
 
         military.update(ownUnits, neutralUnits)
-        workers.update(ownUnits, neutralUnits) //we have to reconnect because there's no such thing as "pass by reference" here ;(
-        //resources.update(ownUnits, neutralUnits, workers.getGatheringWorkers) //each module must require the game and player handles to update its data
+        workers.update(ownUnits, neutralUnits)
+        resources.update(ownUnits, neutralUnits)
     }
 
     def updateFrame(): Unit = {

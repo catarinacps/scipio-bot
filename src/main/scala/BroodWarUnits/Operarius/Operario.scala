@@ -6,7 +6,11 @@ import bwapi.{Unit => ScUnit, _}
   *
   * It keeps track of a worker and its current job
   */
-class Operario(myself: ScUnit, gameCons: Game) extends BroodWarUnits.Homo(myself, gameCons) {
+class Operario(gameCons: Game) extends BroodWarUnits.Homo(gameCons, UnitType.Terran_SCV) {
+
+    def this(myself: ScUnit, gameCons: Game){
+      this(gameCons)
+    }
 
     def update(myself: ScUnit, game: Game): Unit = {
         this.game = game

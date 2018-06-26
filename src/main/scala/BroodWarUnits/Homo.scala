@@ -1,10 +1,8 @@
 package BroodWarUnits
 
-import bwapi.{Game, Position, Unit => ScUnit}
+import bwapi.{Game, Position, UnitType, Unit => ScUnit}
 
-abstract class Homo(myself: ScUnit, gameCons: Game) extends BroodWarUnits.Unitas(gameCons) {
-    //not sure if we really need this class but it looks cool
-    this.me = myself
+abstract class Homo(gameCons: Game,  param: UnitType) extends BroodWarUnits.Unitas(gameCons, param) {
 
     def move(xy: Position): Unit = { //polymorphism by inclusion :) (cuz every unit can move)
         me.move(xy)

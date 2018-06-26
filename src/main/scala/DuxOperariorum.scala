@@ -19,8 +19,6 @@ class DuxOperariorum extends BWAPIConnection {
     private var gatheringWorkers: ListBuffer[Operario] = ListBuffer()
     private var buildingWorkers: ListBuffer[Operario] = ListBuffer()
 
-    var workerCount: Int = 4
-
     //this method handles the add or update of all units under this controllers care
     def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = { //overrides abstract method
         print("update\n")
@@ -46,18 +44,14 @@ class DuxOperariorum extends BWAPIConnection {
                 }
             }
         }
-        if (self.minerals() >= 50 && workerCount < 10) {
-            if (trainUnit(UnitType.Terran_SCV))
-                workerCount = workerCount + 1
-        }
         gather(ownUnits, neutralUnits)
     }
 
-    def trainUnit(unitType: UnitType): Boolean = {
+    def trainUnit(op: Operario): Boolean = {
         for (i <- self.getUnits.asScala) {
             if (i.getType == UnitType.Terran_Command_Center && !i.isTraining) {
                 print("moar workers\n")
-                i.train(unitType)
+                i.train(op.ut)
                 return true
             }
         }

@@ -24,6 +24,8 @@ class Scipio extends DefaultBWListener {
 
     override def onUnitCreate(unit: ScUnit): Unit = {
         System.out.println("New unit " + unit.getType)
+        if(whatToBuild.isLocked)
+          whatToBuild.unlockBuildOrder()
     }
 
     override def onStart(): Unit = {
@@ -56,14 +58,19 @@ class Scipio extends DefaultBWListener {
 
         this.updateFrame()
 
-        next = whatToBuild.canDo
+      try{
+        next = whatToBuild.canDo(self)
+      }catch {
+        case aaa: Throwable =>
+          print(aaa)
+      }
 
         if (next.isDefined) {
             println("Im defined!")
             next.get match {
                 case organic: Homo => organic match {
                     case operario: Operario => //its a worker
-                        workers.trainUnit(operario.me.getType)
+                        workers.trainUnit(operario)
                     case militum: Soldier => //its a militum
                         //to be implemented
                     case _ =>
@@ -71,10 +78,16 @@ class Scipio extends DefaultBWListener {
                 }
                 case building =>
                     //Its a domus
-                    resources.buildBuilding(building.me.getType, workers.getGatheringWorkers.remove(0))
+                    print("Biudi biudinguis\n")
+                  try{
+                    resources.buildBuilding(building.ut, workers.getGatheringWorkers.remove(0))
+                  }catch{
+                    case e: Throwable =>
+                      print(e)
+                  }
             }
         }
-
+         print(self.minerals + "\n")
         military.update(ownUnits, neutralUnits)
         workers.update(ownUnits, neutralUnits)
         resources.update(ownUnits, neutralUnits)

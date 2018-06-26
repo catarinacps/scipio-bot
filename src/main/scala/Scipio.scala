@@ -1,7 +1,7 @@
 import BroodWarUnits.Operarius.Operario
+import BroodWarUnits._
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
-import BroodWarUnits._
 
 import scala.collection.JavaConverters._
 
@@ -13,7 +13,7 @@ class Scipio extends DefaultBWListener {
     var workers: DuxOperariorum = _
     var resources: DuxOpum = _
     var startPos: TilePosition = _
-    var whatToBuild: buildOrder = _
+    var whatToBuild: BuildOrder = _
 
 
     def run(): Unit = {
@@ -40,7 +40,7 @@ class Scipio extends DefaultBWListener {
         military = new DuxMilitum()
         workers = new DuxOperariorum()
         resources = new DuxOpum(startPos)
-        whatToBuild = new buildOrder(game)
+        whatToBuild = new BuildOrder(game)
         //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
@@ -49,40 +49,23 @@ class Scipio extends DefaultBWListener {
         game.drawTextScreen(10, 10, "Playing as " + self.getName + " - " + self.getRace)
         val ownUnits = self.getUnits.asScala
         val neutralUnits = game.neutral.getUnits.asScala
-        var next : Option[Unitas] = None
+        var next: Option[Unitas] = None
 
-        /*
-        self.getUnits.asScala
-            .filter(_.getType == UnitType.Terran_Command_Center && self.minerals >= 50)
-            .foreach(_.train(UnitType.Terran_SCV))
-
-        self.getUnits.asScala
-            .filter(_.getType.isWorker)
-            .filter(_.isIdle)
-            .foreach { worker =>
-                val closestMineral = game.neutral.getUnits.asScala
-                    .filter(_.getType.isMineralField)
-                    .map(mineral => (mineral.getDistance(worker), mineral))
-                    .sortBy(_._1)
-                    .map(_._2)
-                    .headOption
-
-                closestMineral.foreach(worker.gather)
-            }*/
         print("On frame\n")
 
         this.updateFrame()
 
-        next=whatToBuild.canDo()
+        next = whatToBuild.canDo
 
-        if(next.isDefined){
-            if(next.get.isInstanceOf[Homo]){
-                if(next.get.isInstanceOf[Operario]){    //its a worker
+        if (next.isDefined) {
+            if (next.get.isInstanceOf[Homo]) {
+                if (next.get.isInstanceOf[Operario]) { //its a worker
                     workers.trainUnit(next.get.asInstanceOf[Operario].me.getType)
-                }else{  //its a militum
+                } else { //its a militum
                     //to be implemented
                 }
-            }else{//Its a domus
+            } else {
+                //Its a domus
                 resources.buildBuilding(next.get.me.getType, workers.getGatheringWorkers.remove(0))
             }
         }

@@ -1,5 +1,5 @@
-import BroodWarUnits.{BWAPIConnection, Domus}
-import bwapi.{Unit => ScUnit, _}
+import BroodWarUnits.BWAPIConnection
+import bwapi.{Unit => ScUnit}
 
 import scala.collection.mutable.Buffer
 

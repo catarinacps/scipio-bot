@@ -6,11 +6,11 @@ import bwapi.{Unit => ScUnit, _}
   *
   * It keeps track of a worker and its current job
   */
-class Operario(myself: ScUnit,gameCons:Game) extends BroodWarUnits.Homo(myself,gameCons) {
+class Operario(myself: ScUnit, gameCons: Game) extends BroodWarUnits.Homo(myself, gameCons) {
 
-    def update(myself: ScUnit,game: Game): Unit = {
-        this.game=game
-        this.me=myself
+    def update(myself: ScUnit, game: Game): Unit = {
+        this.game = game
+        this.me = myself
     }
 
     def isIdle: Boolean = me.isIdle

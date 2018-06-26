@@ -9,6 +9,6 @@ abstract class Unitas(gameCons:Game){
     var game:Game=gameCons
     def getID: Int = me.getID
 
-    def update(game:Game):Unit //this is abstract
+    def update(myself: ScUnit,game:Game):Unit //this is abstract
 
 }

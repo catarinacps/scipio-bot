@@ -2,18 +2,24 @@ package BroodWarUnits
 import scala.collection.JavaConverters._
 import bwapi.{Game, TilePosition, UnitType, Unit => ScUnit}
 
-class Domus[T](worker: ScUnit, startPos: TilePosition, gameCons:Game, param:T) extends Unitas(gameCons){
-  var pos: TilePosition = game.getBuildLocation(param.asInstanceOf[UnitType], startPos, 100)
+class Domus[T](gameCons:Game,param:T) extends Unitas(gameCons){
+  var pos: TilePosition = _
 
-  def this(worker: ScUnit, game : Game, startPos : TilePosition, param:T){
-    this(worker, game, startPos)
+  def this(worker: ScUnit, startPos: TilePosition, gameCons:Game, param:T)={
+    this(gameCons,param)
+    build(worker,startPos)
+  }
+
+  def build(worker: ScUnit, startPos: TilePosition)={
+    pos=game.getBuildLocation(param.asInstanceOf[UnitType], startPos, 100)
     worker.build(param.asInstanceOf[UnitType], pos)
   }
 
-  override def update(game:Game)= {
+  override def update(myself: ScUnit,game:Game)= {
     this.game=game
+    this.me=myself
     //Checks every frame to see if construction has been completed. If so, updates myself
-    if (!me.exists()) {
+    if (!me.exists) {
       val units = game.getUnitsOnTile(this.pos).asScala
       for (item <- units) {
         if (item.getType == param.asInstanceOf[UnitType]) {

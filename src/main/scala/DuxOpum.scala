@@ -1,6 +1,5 @@
 import BroodWarUnits.BWAPIConnection
 import bwapi.{Unit => ScUnit, _}
-import BroodWarUnits.Aedificium._
 import BroodWarUnits.Domus
 import BroodWarUnits.Operarius._
 
@@ -37,25 +36,14 @@ class DuxOpum(startPos: TilePosition) extends BWAPIConnection {
             print("passou\n")
             hasBuiltBarrack=true
             print("tchau\n")
-        }else if (self.minerals >= 100) {
+        }else if (hasBuiltBarrack==true && self.minerals >= 100) {
             buildings+=new Domus(gatheringWorkers.remove(0).me, startPos,game,UnitType.Terran_Supply_Depot)
         }
 
     }
 
-    def buildBuilding(unitType: UnitType):Unit = {
-        print("refinery\n")
-        for (i <- ownUnits) {
-            if (i.getType == UnitType.Resource_Vespene_Geyser) {
-                for (u <- ownUnits) {
-                    print("all units")
-                    if (u.getType == UnitType.Terran_SCV && !u.isConstructing) {
-                        print("found worker")
-                        u.build(unitType, i.getTilePosition)
-                    }
-                }
-            }
-        }
+    def buildBuilding(building: UnitType, worker: Operario):Unit = {
+        buildings += new Domus(worker.me,startPos,game,building)
     }
 
 }

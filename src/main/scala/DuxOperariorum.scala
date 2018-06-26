@@ -23,20 +23,28 @@ class DuxOperariorum extends BWAPIConnection {
 
     //this method handles the add or update of all units under this controllers care
     def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]):Unit = { //overrides abstract method
+      print("update\n")
         for (i <- ownUnits) {
             if (i.getType == UnitType.Terran_SCV) {
+              print("achou scv\n")
                 if (workerList.nonEmpty) { //if the list is not empty
+                  print("oie\n")
+                  print("workers "+workerList+"\n")
+                  print("wtf "+workerList.find(_.getID == i.getID)+"\n")
                     if (workerList.find(_.getID == i.getID).isEmpty) { //if its not on the list
+                      print("if1\n")
                         val worker = new Operario(i,game)
                         workerList += worker
                         idleWorkers += worker
-
+                      print("fim fi1\n")
                     } else { //if it IS on the list
+                      print("else2\n")
                         val wk = workerList.find(_.getID == i.getID).get
-                        wk.update(game)
+                        wk.update(i,game)
                         if (wk.isIdle) {
                             idleWorkers += wk
                         }
+                      print("fim else2")
 
                     }
                 } else { //if the list is empty (therefore its not on the list)
@@ -50,6 +58,7 @@ class DuxOperariorum extends BWAPIConnection {
         if(trainUnit(UnitType.Terran_SCV)==true)
           workerCount = workerCount + 1
       }
+      print("idk "+workerList+"\n")
       gather(ownUnits,neutralUnits)
     }
 

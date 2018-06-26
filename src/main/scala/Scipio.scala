@@ -1,5 +1,7 @@
+import BroodWarUnits.Operarius.Operario
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
+import BroodWarUnits._
 
 import scala.collection.JavaConverters._
 
@@ -11,6 +13,7 @@ class Scipio extends DefaultBWListener {
     var workers: DuxOperariorum = _
     var resources: DuxOpum = _
     var startPos: TilePosition = _
+    var whatToBuild: buildOrder = _
 
 
     def run(): Unit = {
@@ -37,6 +40,7 @@ class Scipio extends DefaultBWListener {
         military = new DuxMilitum()
         workers = new DuxOperariorum()
         resources = new DuxOpum(startPos)
+        whatToBuild = new buildOrder(game)
         //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
@@ -45,6 +49,7 @@ class Scipio extends DefaultBWListener {
         game.drawTextScreen(10, 10, "Playing as " + self.getName + " - " + self.getRace)
         val ownUnits = self.getUnits.asScala
         val neutralUnits = game.neutral.getUnits.asScala
+        var next : Option[Unitas] = None
 
         /*
         self.getUnits.asScala
@@ -68,9 +73,23 @@ class Scipio extends DefaultBWListener {
 
         this.updateFrame()
 
+        next=whatToBuild.canDo()
+
+        if(next.isDefined){
+            if(next.get.isInstanceOf[Homo]){
+                if(next.get.isInstanceOf[Operario]){    //its a worker
+                    workers.trainUnit(next.get.asInstanceOf[Operario].me.getType)
+                }else{  //its a militum
+                    //to be implemented
+                }
+            }else{//Its a domus
+                resources.buildBuilding(next.get.me.getType, workers.getGatheringWorkers.remove(0))
+            }
+        }
+
         military.update(ownUnits, neutralUnits)
         workers.update(ownUnits, neutralUnits) //we have to reconnect because there's no such thing as "pass by reference" here ;(
-        resources.update(ownUnits, neutralUnits, workers.getGatheringWorkers) //each module must require the game and player handles to update its data
+        //resources.update(ownUnits, neutralUnits, workers.getGatheringWorkers) //each module must require the game and player handles to update its data
     }
 
     def updateFrame(): Unit = {

@@ -8,8 +8,9 @@ import bwapi.{Unit => ScUnit, _}
   */
 class Operario(myself: ScUnit,gameCons:Game) extends BroodWarUnits.Homo(myself,gameCons) {
 
-    def update(game: Game): Unit = {
+    def update(myself: ScUnit,game: Game): Unit = {
         this.game=game
+        this.me=myself
     }
 
     def isIdle: Boolean = me.isIdle

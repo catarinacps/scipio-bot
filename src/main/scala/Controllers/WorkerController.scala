@@ -1,6 +1,6 @@
-package Duces
+package Controllers
 
-import BroodWarUnitas.Operarii._
+import BroodWarUnits.Workers._
 import bwapi.{Unit => ScUnit, _}
 
 import scala.collection.JavaConverters._
@@ -12,13 +12,13 @@ import scala.util.control.Breaks._
   * It manages how many workers are active, how many minerals
   * are being gathered and any new request for new workers.
   */
-class DuxOperariorum extends BWAPIConnection {
+class WorkerController extends BWAPIConnection {
 
     //connect(gameCons,selfCons) //this will run on instantiation
-    private var workerList: ListBuffer[Operario] = ListBuffer()
-    private var idleWorkers: ListBuffer[Operario] = ListBuffer()
-    private var gatheringWorkers: ListBuffer[Operario] = ListBuffer()
-    private var buildingWorkers: ListBuffer[Operario] = ListBuffer()
+    private var workerList: ListBuffer[Worker] = ListBuffer()
+    private var idleWorkers: ListBuffer[Worker] = ListBuffer()
+    private var gatheringWorkers: ListBuffer[Worker] = ListBuffer()
+    private var buildingWorkers: ListBuffer[Worker] = ListBuffer()
 
     //this method handles the add or update of all units under this controllers care
     def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = { //overrides abstract method
@@ -27,7 +27,7 @@ class DuxOperariorum extends BWAPIConnection {
             if (i.getType == UnitType.Terran_SCV) {
                 if (workerList.nonEmpty) { //if the list is not empty
                     if (!workerList.exists(_.getID == i.getID)) { //if its not on the list
-                        val worker = new Operario(i, game)
+                        val worker = new Worker(i, game)
                         workerList += worker
                         idleWorkers += worker
                     } else { //if it IS on the list
@@ -38,7 +38,7 @@ class DuxOperariorum extends BWAPIConnection {
                         }
                     }
                 } else { //if the list is empty (therefore its not on the list)
-                    var worker = new Operario(i, game)
+                    var worker = new Worker(i, game)
                     workerList += worker
                     idleWorkers += worker
                 }
@@ -48,7 +48,7 @@ class DuxOperariorum extends BWAPIConnection {
         gather(ownUnits, neutralUnits)
     }
 
-    def trainUnit(op: Operario): Boolean = {
+    def trainUnit(op: Worker): Boolean = {
         for (i <- self.getUnits.asScala) {
             if (i.getType == UnitType.Terran_Command_Center && !i.isTraining) {
                 print("moar workers\n")
@@ -76,8 +76,8 @@ class DuxOperariorum extends BWAPIConnection {
         }
     }
 
-    def getGatheringWorkers: ListBuffer[Operario] = this.gatheringWorkers
+    def getGatheringWorkers: ListBuffer[Worker] = this.gatheringWorkers
 
-    def getIdleWorkers: ListBuffer[Operario] = this.idleWorkers
+    def getIdleWorkers: ListBuffer[Worker] = this.idleWorkers
 
 }

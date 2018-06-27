@@ -1,22 +1,22 @@
-package Duces
+package Controllers
 
-import BroodWarUnitas.Operarii.Operario
-import BroodWarUnitas.{Aedificium, Unitas}
+import BroodWarUnits.Workers.Worker
+import BroodWarUnits.{Building, Unit}
 import bwapi.{Game, Player, UnitType}
 
 import scala.collection.mutable.Queue
 
-class Structor(gameCons: Game) {
-    private var buildOrder: Queue[Unitas] = Queue()
+class BuildOrder(gameCons: Game) {
+    private var buildOrder: Queue[Unit] = Queue()
     private val game: Game = gameCons
     private var lock: Boolean = false
 
-    buildOrder.enqueue(new Operario(game))
-    buildOrder.enqueue(new Aedificium(game, UnitType.Terran_Barracks))
-    buildOrder.enqueue(new Aedificium(game, UnitType.Terran_Supply_Depot))
-    buildOrder.enqueue(new Aedificium(game, UnitType.Terran_Supply_Depot))
+    buildOrder.enqueue(new Worker(game))
+    buildOrder.enqueue(new Building(game, UnitType.Terran_Barracks))
+    buildOrder.enqueue(new Building(game, UnitType.Terran_Supply_Depot))
+    buildOrder.enqueue(new Building(game, UnitType.Terran_Supply_Depot))
 
-    def canDo(self: Player): Option[Unitas] = {
+    def canDo(self: Player): Option[Unit] = {
         if (buildOrder.isEmpty || lock) {
             return None
         }

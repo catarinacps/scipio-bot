@@ -1,10 +1,10 @@
-package BroodWarUnitas
+package BroodWarUnits
 
 import bwapi.{Game, TilePosition, UnitType, Unit => ScUnit}
 
 import scala.collection.JavaConverters._
 
-class Aedificium[T](gameCons: Game, param: T) extends Unitas(gameCons, param.asInstanceOf[UnitType]) {
+class Building[T](gameCons: Game, param: T) extends Unit(gameCons, param.asInstanceOf[UnitType]) {
     private var pos: TilePosition = _
 
     def this(worker: ScUnit, startPos: TilePosition, gameCons: Game, param: T) = {

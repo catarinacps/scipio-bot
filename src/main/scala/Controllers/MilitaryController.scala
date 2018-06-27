@@ -1,4 +1,4 @@
-package Duces
+package Controllers
 
 import bwapi.{Unit => ScUnit}
 
@@ -10,7 +10,7 @@ import scala.collection.mutable.Buffer
   * are being trained and any new request for new soldiers. And patrols.
   */
 
-class DuxMilitum extends BWAPIConnection {
+class MilitaryController extends BWAPIConnection {
 
     //connect(gameCons,selfCons) //this will run on instantiation
     /*

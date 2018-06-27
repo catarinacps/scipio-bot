@@ -1,7 +1,7 @@
-package Duces
+package Controllers
 
-import BroodWarUnitas.Operarii._
-import BroodWarUnitas.Aedificium
+import BroodWarUnits.Workers._
+import BroodWarUnits.Building
 import bwapi.{Unit => ScUnit, _}
 
 import scala.collection.mutable.{Buffer, ListBuffer}
@@ -12,20 +12,20 @@ import scala.collection.mutable.{Buffer, ListBuffer}
   * exist and any new request for new buildings. Not sure if we need this but it looks cool.
   */
 
-import BroodWarUnitas.Unitas
+import BroodWarUnits.Unit
 
-class DuxOpum(startPos: TilePosition) extends BWAPIConnection {
+class BuildingController(startPos: TilePosition) extends BWAPIConnection {
     private var ownUnits: Buffer[ScUnit] = Buffer()
     private var neutralUnits: Buffer[ScUnit] = Buffer()
-    private var buildings: ListBuffer[Unitas] = ListBuffer()
+    private var buildings: ListBuffer[Unit] = ListBuffer()
 
     def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = {
         this.ownUnits = ownUnits
         this.neutralUnits = neutralUnits
     }
 
-    def buildBuilding(building: UnitType, worker: Operario): Unit = {
-        buildings += new Aedificium(worker.me, startPos, game, building)
+    def buildBuilding(building: UnitType, worker: Worker): Unit = {
+        buildings += new Building(worker.me, startPos, game, building)
     }
 
 }

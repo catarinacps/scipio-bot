@@ -1,8 +1,8 @@
-package BroodWarUnitas
+package BroodWarUnits
 
 import bwapi.{Game, Player, UnitType, Unit => ScUnit}
 
-abstract class Unitas(gameCons: Game, unitType: UnitType) {
+abstract class Unit(gameCons: Game, unitType: UnitType) {
     protected var me: ScUnit = _
     protected var game: Game = gameCons
     protected val ut: UnitType = unitType

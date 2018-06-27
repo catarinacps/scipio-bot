@@ -1,7 +1,7 @@
-import BroodWarUnitas.Milites.Miles
-import BroodWarUnitas.Operarii.Operario
-import BroodWarUnitas._
-import Duces.{DuxMilitum, DuxOperariorum, DuxOpum, Structor}
+import BroodWarUnits.Military.Soldier
+import BroodWarUnits.Workers.Worker
+import BroodWarUnits._
+import Controllers.{MilitaryController, WorkerController, BuildingController, BuildOrder}
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
 
@@ -11,11 +11,11 @@ class Scipio extends DefaultBWListener {
     val mirror = new Mirror()
     var game: Game = _
     var self: Player = _
-    var military: DuxMilitum = _
-    var workers: DuxOperariorum = _
-    var resources: DuxOpum = _
+    var military: MilitaryController = _
+    var workers: WorkerController = _
+    var resources: BuildingController = _
     var startPos: TilePosition = _
-    var whatToBuild: Structor = _
+    var whatToBuild: BuildOrder = _
 
 
     def run(): Unit = {
@@ -41,10 +41,10 @@ class Scipio extends DefaultBWListener {
         BWTA.readMap()
         BWTA.analyze()
         System.out.println("Map data ready")
-        military = new DuxMilitum()
-        workers = new DuxOperariorum()
-        resources = new DuxOpum(startPos)
-        whatToBuild = new Structor(game)
+        military = new MilitaryController()
+        workers = new WorkerController()
+        resources = new BuildingController(startPos)
+        whatToBuild = new BuildOrder(game)
         //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
@@ -54,7 +54,7 @@ class Scipio extends DefaultBWListener {
 
         val ownUnits = self.getUnits.asScala
         val neutralUnits = game.neutral.getUnits.asScala
-        var next: Option[Unitas] = None
+        var next: Option[Unit] = None
 
         print("On frame\n")
 
@@ -69,10 +69,10 @@ class Scipio extends DefaultBWListener {
 
         if (next.isDefined) {
             next.get match {
-                case organic: Homo => organic match {
-                    case operario: Operario =>
+                case organic: Person => organic match {
+                    case operario: Worker =>
                         workers.trainUnit(operario)
-                    case militum: Miles =>
+                    case militum: Soldier =>
                     // no military unit creation
                     case _ =>
                     //

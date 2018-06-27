@@ -12,12 +12,12 @@ import scala.collection.mutable.{Buffer, ListBuffer}
   * exist and any new request for new buildings. Not sure if we need this but it looks cool.
   */
 
-import BroodWarUnits.Unit
+import BroodWarUnits.Units
 
 class BuildingController(startPos: TilePosition) extends BWAPIConnection {
     private var ownUnits: Buffer[ScUnit] = Buffer()
     private var neutralUnits: Buffer[ScUnit] = Buffer()
-    private var buildings: ListBuffer[Unit] = ListBuffer()
+    private var buildings: ListBuffer[Units] = ListBuffer()
 
     def update(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = {
         this.ownUnits = ownUnits

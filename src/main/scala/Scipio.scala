@@ -54,7 +54,7 @@ class Scipio extends DefaultBWListener {
 
         val ownUnits = self.getUnits.asScala
         val neutralUnits = game.neutral.getUnits.asScala
-        var next: Option[Unit] = None
+        var next: Option[Units] = None
 
         print("On frame\n")
 

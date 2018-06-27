@@ -1,13 +1,13 @@
 package Controllers
 
 import BroodWarUnits.Workers.Worker
-import BroodWarUnits.{Building, Unit}
+import BroodWarUnits.{Building, Units}
 import bwapi.{Game, Player, UnitType}
 
 import scala.collection.mutable.Queue
 
 class BuildOrder(gameCons: Game) {
-    private var buildOrder: Queue[Unit] = Queue()
+    private var buildOrder: Queue[Units] = Queue()
     private val game: Game = gameCons
     private var lock: Boolean = false
 
@@ -16,7 +16,7 @@ class BuildOrder(gameCons: Game) {
     buildOrder.enqueue(new Building(game, UnitType.Terran_Supply_Depot))
     buildOrder.enqueue(new Building(game, UnitType.Terran_Supply_Depot))
 
-    def canDo(self: Player): Option[Unit] = {
+    def canDo(self: Player): Option[Units] = {
         if (buildOrder.isEmpty || lock) {
             return None
         }

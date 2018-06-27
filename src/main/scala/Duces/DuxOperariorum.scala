@@ -1,5 +1,6 @@
-import BroodWarUnits.BWAPIConnection
-import BroodWarUnits.Operarius._
+package Duces
+
+import BroodWarUnitas.Operarii._
 import bwapi.{Unit => ScUnit, _}
 
 import scala.collection.JavaConverters._
@@ -35,7 +36,6 @@ class DuxOperariorum extends BWAPIConnection {
                         if (wk.isIdle) {
                             idleWorkers += wk
                         }
-
                     }
                 } else { //if the list is empty (therefore its not on the list)
                     var worker = new Operario(i, game)
@@ -44,6 +44,7 @@ class DuxOperariorum extends BWAPIConnection {
                 }
             }
         }
+
         gather(ownUnits, neutralUnits)
     }
 
@@ -61,10 +62,8 @@ class DuxOperariorum extends BWAPIConnection {
     def gather(ownUnits: Buffer[ScUnit], neutralUnits: Buffer[ScUnit]): Unit = {
         for (worker <- workerList) {
             if (worker.isIdle) {
-                print(worker.getID + ", we have work for you\n")
                 for (i <- neutralUnits) {
                     if (i.getType.isMineralField && i.isVisible(self)) {
-                        print("gather!")
                         worker.gather(i)
                         gatheringWorkers += worker
                         idleWorkers -= worker

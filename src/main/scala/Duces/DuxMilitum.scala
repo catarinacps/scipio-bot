@@ -1,4 +1,5 @@
-import BroodWarUnits.BWAPIConnection
+package Duces
+
 import bwapi.{Unit => ScUnit}
 
 import scala.collection.mutable.Buffer

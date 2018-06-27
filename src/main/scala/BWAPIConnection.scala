@@ -1,11 +1,4 @@
-package BroodWarUnits
-
-import bwapi.{Unit => ScUnit, _}
-import scala.collection.JavaConverters._
-import scala.collection.mutable.Buffer
-import bwta.BWTA
-
-import scala.collection.mutable.ListBuffer
+import bwapi._
 
 trait BWAPIConnection {
     var game: Game = _

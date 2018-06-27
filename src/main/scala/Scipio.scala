@@ -1,6 +1,7 @@
-import BroodWarUnits.Militum.Soldier
-import BroodWarUnits.Operarius.Operario
-import BroodWarUnits._
+import BroodWarUnitas.Milites.Miles
+import BroodWarUnitas.Operarii.Operario
+import BroodWarUnitas._
+import Duces.{DuxMilitum, DuxOperariorum, DuxOpum, Structor}
 import bwapi.{Unit => ScUnit, _}
 import bwta.BWTA
 
@@ -14,7 +15,7 @@ class Scipio extends DefaultBWListener {
     var workers: DuxOperariorum = _
     var resources: DuxOpum = _
     var startPos: TilePosition = _
-    var whatToBuild: BuildOrder = _
+    var whatToBuild: Structor = _
 
 
     def run(): Unit = {
@@ -24,8 +25,8 @@ class Scipio extends DefaultBWListener {
 
     override def onUnitCreate(unit: ScUnit): Unit = {
         System.out.println("New unit " + unit.getType)
-        if(whatToBuild.isLocked)
-          whatToBuild.unlockBuildOrder()
+        if (whatToBuild.isLocked)
+            whatToBuild.unlockBuildOrder()
     }
 
     override def onStart(): Unit = {
@@ -43,13 +44,14 @@ class Scipio extends DefaultBWListener {
         military = new DuxMilitum()
         workers = new DuxOperariorum()
         resources = new DuxOpum(startPos)
-        whatToBuild = new BuildOrder(game)
+        whatToBuild = new Structor(game)
         //if we are not doing any setup for the controllers we might as well rework the constructors
     }
 
     override def onFrame(): Unit = {
         //game.setTextSize(10);
         game.drawTextScreen(10, 10, "Playing as " + self.getName + " - " + self.getRace)
+
         val ownUnits = self.getUnits.asScala
         val neutralUnits = game.neutral.getUnits.asScala
         var next: Option[Unitas] = None
@@ -58,46 +60,42 @@ class Scipio extends DefaultBWListener {
 
         this.updateFrame()
 
-      try{
-        next = whatToBuild.canDo(self)
-      }catch {
-        case aaa: Throwable =>
-          print(aaa)
-      }
+        try {
+            next = whatToBuild.canDo(self)
+        } catch {
+            case e: Throwable =>
+                e.printStackTrace()
+        }
 
         if (next.isDefined) {
-            println("Im defined!")
             next.get match {
                 case organic: Homo => organic match {
-                    case operario: Operario => //its a worker
+                    case operario: Operario =>
                         workers.trainUnit(operario)
-                    case militum: Soldier => //its a militum
-                        //to be implemented
+                    case militum: Miles =>
+                    // no military unit creation
                     case _ =>
-                        //
+                    //
                 }
                 case building =>
-                    //Its a domus
-                    print("Biudi biudinguis\n")
-                  try{
-                    resources.buildBuilding(building.ut, workers.getGatheringWorkers.remove(0))
-                  }catch{
-                    case e: Throwable =>
-                      e.printStackTrace()
-                  }
+                    try {
+                        resources.buildBuilding(building.ut, workers.getGatheringWorkers.remove(0))
+                    } catch {
+                        case e: Throwable =>
+                            e.printStackTrace()
+                    }
             }
         }
-         print("\n" + self.minerals + "\n")
+
         military.update(ownUnits, neutralUnits)
-      try{
-        workers.update(ownUnits, neutralUnits)
+        try {
+            workers.update(ownUnits, neutralUnits)
 
-      }catch{
-        case e: Throwable =>
-
-          e.printStackTrace()
-      }
-      resources.update(ownUnits, neutralUnits)
+        } catch {
+            case e: Throwable =>
+                e.printStackTrace()
+        }
+        resources.update(ownUnits, neutralUnits)
     }
 
     def updateFrame(): Unit = {

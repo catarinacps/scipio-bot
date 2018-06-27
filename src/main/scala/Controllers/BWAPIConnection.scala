@@ -1,3 +1,5 @@
+package Controllers
+
 import bwapi._
 
 trait BWAPIConnection {
